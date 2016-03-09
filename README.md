@@ -97,7 +97,7 @@ You can create an invoice with the instances created above:
 let invoice = new szamlazz.Invoice({
   paymentMethod: szamlazz.PaymentMethod.BankTransfer, // optional, default: BankTransfer
   currency: szamlazz.Currency.Ft, // optional, default: Ft
-  language: szamlazz.Language.Hungarian // optional, default: Hungarian
+  language: szamlazz.Language.Hungarian, // optional, default: Hungarian
   seller: seller, // the seller, required
   buyer: buyer, // the buyer, required
   items: [ soldItem1, solidItem2 ] // the sold items, required

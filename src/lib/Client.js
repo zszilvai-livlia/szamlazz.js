@@ -61,8 +61,6 @@ class Client
       }
     }
 
-    console.log(data)
-
     this._req = request.post({
       formData,
       url: szamlazzURL,
