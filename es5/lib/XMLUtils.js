@@ -44,7 +44,7 @@ function wrapWithElement(name, data, indentLevel) {
         var m = data.getMonth() + 1;
         var d = data.getDate();
         m = m < 10 ? '0' + m : m;
-        d = d < 10 ? '0' + d : m;
+        d = d < 10 ? '0' + d : d;
         o += y + '-' + m + '-' + d;
       } else {
         o += escapeXMLString(String(data));

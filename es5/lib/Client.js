@@ -56,8 +56,6 @@ var Client = function () {
         }
       };
 
-      console.log(data);
-
       this._req = request.post({
         formData: formData,
         url: szamlazzURL,
