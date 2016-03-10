@@ -43,7 +43,7 @@ function wrapWithElement(name, data, indentLevel)
         let m = data.getMonth() + 1
         let d = data.getDate()
         m = m < 10 ? '0' + m : m
-        d = d < 10 ? '0' + d : m
+        d = d < 10 ? '0' + d : d
         o += y + '-' + m + '-' + d
       }
       else {
