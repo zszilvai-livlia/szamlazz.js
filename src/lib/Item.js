@@ -27,7 +27,7 @@ class Item
   _generateXML(indentLevel, currency)
   {
     assert(typeof this._options.label === 'string' && this._options.label.trim() !== '', 'Valid Label value missing from item options')
-    assert(typeof this._options.quantity === 'number' && this._options.quantity > 0, 'Valid Count value missing from item options')
+    assert(typeof this._options.quantity === 'number' && this._options.quantity !== 0, 'Valid Count value missing from item options')
     assert(typeof this._options.unit === 'string' && this._options.unit.trim() !== '', 'Valid Unit value missing from item options')
     assert(typeof this._options.vat !== 'undefined' && this._options.vat !== '', 'Valid Vat Percentage value missing from item options')
 
