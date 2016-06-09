@@ -1,14 +1,20 @@
 # szamlazz.js
 
-A Node.JS Client for Szamlazz.hu
+A Node.js client for Szamlazz.hu
 
-## Require the library
+## Installation
+
+```
+npm install szamlazz.hu --save
+```
+
+## Usage
 
 ```javascript
 const szamlazz = require('szamlazz.js')
 ```
 
-## Create a client
+### Create a client
 
 ```javascript
 const szamlazzClient = new szamlazz.Client({
@@ -22,7 +28,9 @@ const szamlazzClient = new szamlazz.Client({
 })
 ```
 
-## Create a seller
+You can reuse this client to issue invoices.
+
+### Create a seller
 
 ```javascript
 let seller = new szamlazz.Seller({ // everyting is optional
@@ -40,7 +48,7 @@ let seller = new szamlazz.Seller({ // everyting is optional
 
 ```
 
-## Create a buyer
+### Create a buyer
 
 ```javascript
 let buyer = new szamlazz.Buyer({
@@ -63,7 +71,7 @@ let buyer = new szamlazz.Buyer({
 })
 ```
 
-## Create an invoice item
+### Create an invoice item
 
 With net unit price:
 ```javascript
@@ -89,7 +97,7 @@ let solidItem2 = new szamlazz.Item({
 })
 ```
 
-## Create an invoice
+### Create an invoice
 
 You can create an invoice with the instances created above:
 
