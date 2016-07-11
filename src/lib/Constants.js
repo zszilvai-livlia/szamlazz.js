@@ -1,44 +1,44 @@
 'use strict'
 
-class Currency
-{
-  constructor(value, roundPriceExp, comment) {
+class Currency {
+  constructor (value, roundPriceExp, comment) {
     this.value = value
     this.comment = comment
     this.roundPriceExp = roundPriceExp
   }
-  toString() {
+
+  toString () {
     return this.value + '(' + this.comment + ')'
   }
 }
 
-class Language
-{
-  constructor(value, name) {
+class Language {
+  constructor (value, name) {
     this.value = value
     this.name = name
   }
-  toString() {
+
+  toString () {
     return this.name + '(' + this.value + ')'
   }
 }
 
 class PaymentMethod {
-  constructor(value, comment) {
+  constructor (value, comment) {
     this.value = value
     this.comment = comment
   }
-  toString() {
+
+  toString () {
     return this.value + '(' + this.comment + ')'
   }
 }
 
-exports.setup = function(_module)
-{
+exports.setup = function (_module) {
   _module = _module || {}
 
   _module.Currency = {
-    Ft:  new Currency('Ft',  0, 'Hungarian Forint'),
+    Ft: new Currency('Ft', 0, 'Hungarian Forint'),
     HUF: new Currency('HUF', 0, 'Hungarian Forint'),
     EUR: new Currency('EUR', 2, 'Euro'),
     CHF: new Currency('CHF', 2, 'Swiss Franc'),
@@ -84,5 +84,5 @@ exports.setup = function(_module)
 
   _module.Interface = { Currency, Language, PaymentMethod }
 
-  return _module;
+  return _module
 }
