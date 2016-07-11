@@ -34,14 +34,23 @@ var Invoice = function () {
       var _this = this;
 
       indentLevel = indentLevel || 0;
+
       assert(this._options.issueDate instanceof Date, 'Valid IssueDate field missing from invoice options');
+
       assert(this._options.fulfillmentDate instanceof Date, 'Valid FulfillmentDate field missing from invoice options');
+
       assert(this._options.dueDate instanceof Date, 'Valid DueDate field missing from invoice options');
+
       assert(this._options.paymentMethod instanceof Constants.Interface.PaymentMethod, 'Valid PaymentMethod field missing from invoice options');
+
       assert(this._options.currency instanceof Constants.Interface.Currency, 'Valid Currency field missing from invoice options');
+
       assert(this._options.language instanceof Constants.Interface.Language, 'Valid Language field missing from invoice options');
+
       assert(typeof this._options.seller === 'undefined' || this._options.seller instanceof Seller, 'The provided optional Seller field is invalid');
+
       assert(this._options.buyer instanceof Buyer, 'Valid Buyer field missing from invoice options');
+
       assert(Array.isArray(this._options.items), 'Valid Items array missing from invoice options');
 
       var o = XMLUtils.wrapWithElement('fejlec', [['keltDatum', this._options.issueDate], ['teljesitesDatum', this._options.fulfillmentDate], ['fizetesiHataridoDatum', this._options.dueDate], ['fizmod', this._options.paymentMethod.value], ['penznem', this._options.currency.value], ['szamlaNyelve', this._options.language.value], ['megjegyzes', this._options.comment],

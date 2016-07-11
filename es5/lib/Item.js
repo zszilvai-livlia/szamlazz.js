@@ -12,7 +12,9 @@ function round(value, exp) {
   if (exp < 1) {
     return Math.round(value);
   }
+
   var r = Math.pow(10, exp);
+
   return Math.round(value * r) / r;
 }
 
@@ -32,8 +34,11 @@ var Item = function () {
     key: '_generateXML',
     value: function _generateXML(indentLevel, currency) {
       assert(typeof this._options.label === 'string' && this._options.label.trim() !== '', 'Valid Label value missing from item options');
-      assert(typeof this._options.quantity === 'number' && this._options.quantity > 0, 'Valid Count value missing from item options');
+
+      assert(typeof this._options.quantity === 'number' && this._options.quantity !== 0, 'Valid Count value missing from item options');
+
       assert(typeof this._options.unit === 'string' && this._options.unit.trim() !== '', 'Valid Unit value missing from item options');
+
       assert(typeof this._options.vat !== 'undefined' && this._options.vat !== '', 'Valid Vat Percentage value missing from item options');
 
       if (typeof this._options.vat === 'number') {
@@ -52,6 +57,7 @@ var Item = function () {
       }
 
       indentLevel = indentLevel || 0;
+
       return XMLUtils.wrapWithElement('tetel', [['megnevezes', this._options.label], ['mennyiseg', this._options.quantity], ['mennyisegiEgyseg', this._options.unit], ['nettoEgysegar', this._options.netUnitPrice], ['afakulcs', this._options.vat], ['nettoErtek', this._options.netValue], ['afaErtek', this._options.vatValue], ['bruttoErtek', this._options.grossValue], ['megjegyzes', this._options.comment]], indentLevel);
     }
   }]);

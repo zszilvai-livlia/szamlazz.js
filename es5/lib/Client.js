@@ -9,7 +9,8 @@ var merge = require('merge');
 var request = require('request');
 var XMLUtils = require('./XMLUtils');
 
-var xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>\n' + '<xmlszamla xmlns="http://www.szamlazz.hu/xmlszamla" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamla xmlszamla.xsd">\n';
+var xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>\n' + '<xmlszamla xmlns="http://www.szamlazz.hu/xmlszamla" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' + 'xsi:schemaLocation="http://www.szamlazz.hu/xmlszamla xmlszamla.xsd">\n';
+
 var xmlFooter = '</xmlszamla>';
 
 var szamlazzURL = 'https://www.szamlazz.hu/szamla/';
@@ -26,7 +27,9 @@ var Client = function () {
     _classCallCheck(this, Client);
 
     this._options = merge(defaultOptions, options || {});
+
     assert(typeof this._options.user === 'string' && this._options.user.trim().length > 1, 'Valid User field missing form client options');
+
     assert(typeof this._options.password === 'string' && this._options.password.trim().length > 1, 'Valid Password field missing form client options');
 
     this._cookieJar = request.jar();
@@ -62,7 +65,6 @@ var Client = function () {
         jar: this._cookieJar,
         encoding: null
       }, function (err, httpResponse, body) {
-
         if (err) {
           return cb(err);
         }
