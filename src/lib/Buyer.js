@@ -11,22 +11,22 @@ const defaultOptions = {
 class Buyer {
   constructor (options) {
     this._options = merge.recursive(true, defaultOptions, options || {})
+
+    assert(typeof this._options.name === 'string' && this._options.name.trim().length > 0,
+      'Valid Name field missing from buyer options')
+
+    assert(typeof this._options.zip === 'string' && this._options.zip.trim().length > 0,
+      'Valid Zip field missing from buyer options')
+
+    assert(typeof this._options.city === 'string' && this._options.city.trim().length > 0,
+      'Valid City field missing from buyer options')
+
+    assert(typeof this._options.address === 'string' && this._options.address.trim().length > 0,
+      'Valid Address field missing from buyer options')
   }
 
   _generateXML (indentLevel) {
     indentLevel = indentLevel || 0
-
-    assert(typeof this._options.name === 'string' && typeof this._options.name.trim() !== '',
-       'Valid Name field missing from buyer options')
-
-    assert(typeof this._options.zip === 'string' && typeof this._options.zip.trim() !== '',
-      'Valid Zip field missing from buyer options')
-
-    assert(typeof this._options.city === 'string' && typeof this._options.city.trim() !== '',
-      'Valid City field missing from buyer options')
-
-    assert(typeof this._options.address === 'string' && typeof this._options.address.trim() !== '',
-      'Valid Address field missing from buyer options')
 
     return XMLUtils.wrapWithElement('vevo', [
       [ 'nev', this._options.name ],
@@ -43,6 +43,7 @@ class Buyer {
       [ 'postazasiIrsz', this._options.postAddress.zip ],
       [ 'postazasiTelepules', this._options.postAddress.city ],
       [ 'postazasiCim', this._options.postAddress.address ],
+      // TODO: The following feature hasn't implemented yet
       // ['vevoFokonyv', ],
       [ 'azonosito', this._options.identifier ],
       [ 'alairoNeve', this._options.issuerName ],
