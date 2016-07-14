@@ -38,6 +38,10 @@ class Client {
     this._sendRequest('action-xmlagentxmlfile', this._generateInvoiceXML(invoice), cb)
   }
 
+  setRequestInvoiceDownload (value) {
+    this._options.requestInvoiceDownload = value
+  }
+
   _generateInvoiceXML (invoice) {
     return xmlHeader +
       XMLUtils.wrapWithElement('beallitasok', [
@@ -55,6 +59,7 @@ class Client {
 
   _sendRequest (fileFieldName, data, cb) {
     const formData = {}
+
     formData[ fileFieldName ] = {
       value: data,
       options: {
@@ -63,20 +68,21 @@ class Client {
       }
     }
 
-    this._req = request.post({
+    request({
       formData,
+      method: 'POST',
       url: szamlazzURL,
       jar: this._cookieJar,
       encoding: null
     }, (err, httpResponse, body) => {
       if (err) {
-        return cb(err)
+        return cb(err, body, httpResponse)
       }
 
       if (httpResponse.headers.szlahu_error_code) {
         err = new Error(decodeURIComponent(httpResponse.headers.szlahu_error.replace(/\+/g, ' ')))
         err.code = httpResponse.headers.szlahu_error_code
-        return cb(err)
+        return cb(err, body, httpResponse)
       }
 
       const result = {
@@ -89,17 +95,17 @@ class Client {
         if (this._options.responseVersion === 2) {
           XMLUtils.xml2obj(body, { 'xmlszamlavalasz.pdf': 'pdf' }, (err2, parsed) => {
             if (err2) {
-              return cb(err2)
+              return cb(err2, body, httpResponse)
             }
             result.pdf = new Buffer(parsed.pdf, 'base64')
-            cb(null, result)
+            cb(null, result, httpResponse)
           })
         } else {
           result.pdf = body
-          cb(null, result)
+          cb(null, result, httpResponse)
         }
       } else {
-        cb(null, result)
+        cb(null, result, httpResponse)
       }
     })
   }
