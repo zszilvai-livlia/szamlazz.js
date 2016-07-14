@@ -41,6 +41,11 @@ var Client = function () {
       this._sendRequest('action-xmlagentxmlfile', this._generateInvoiceXML(invoice), cb);
     }
   }, {
+    key: 'setRequestInvoiceDownload',
+    value: function setRequestInvoiceDownload(value) {
+      this._options.requestInvoiceDownload = value;
+    }
+  }, {
     key: '_generateInvoiceXML',
     value: function _generateInvoiceXML(invoice) {
       return xmlHeader + XMLUtils.wrapWithElement('beallitasok', [['felhasznalo', this._options.user], ['jelszo', this._options.password], ['eszamla', this._options.eInvoice], ['kulcstartojelszo', this._options.passpharase], ['szamlaLetoltes', this._options.requestInvoiceDownload], ['szamlaLetoltesPld', this._options.downloadedInvoiceCount], ['valaszVerzio', this._options.responseVersion]], 1) + invoice._generateXML(1) + xmlFooter;
@@ -51,6 +56,7 @@ var Client = function () {
       var _this = this;
 
       var formData = {};
+
       formData[fileFieldName] = {
         value: data,
         options: {
@@ -59,20 +65,21 @@ var Client = function () {
         }
       };
 
-      this._req = request.post({
+      request({
         formData: formData,
+        method: 'POST',
         url: szamlazzURL,
         jar: this._cookieJar,
         encoding: null
       }, function (err, httpResponse, body) {
         if (err) {
-          return cb(err);
+          return cb(err, body, httpResponse);
         }
 
         if (httpResponse.headers.szlahu_error_code) {
           err = new Error(decodeURIComponent(httpResponse.headers.szlahu_error.replace(/\+/g, ' ')));
           err.code = httpResponse.headers.szlahu_error_code;
-          return cb(err);
+          return cb(err, body, httpResponse);
         }
 
         var result = {
@@ -85,17 +92,17 @@ var Client = function () {
           if (_this._options.responseVersion === 2) {
             XMLUtils.xml2obj(body, { 'xmlszamlavalasz.pdf': 'pdf' }, function (err2, parsed) {
               if (err2) {
-                return cb(err2);
+                return cb(err2, body, httpResponse);
               }
               result.pdf = new Buffer(parsed.pdf, 'base64');
-              cb(null, result);
+              cb(null, result, httpResponse);
             });
           } else {
             result.pdf = body;
-            cb(null, result);
+            cb(null, result, httpResponse);
           }
         } else {
-          cb(null, result);
+          cb(null, result, httpResponse);
         }
       });
     }
