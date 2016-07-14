@@ -36,12 +36,12 @@ You can reuse this client to issue invoices.
 let seller = new szamlazz.Seller({ // everyting is optional
   bank: {
     name: 'Test Bank <name>',
-    accountNumber: '11111111-11111111-11111111',
+    accountNumber: '11111111-11111111-11111111'
   },
   email: {
     replyToAddress: 'test@email.com',
     subject: 'Invocie email subject',
-    message: 'This is an email message',
+    message: 'This is an email message'
   },
   issuerName: ''
 })
@@ -88,7 +88,7 @@ let soldItem1 = new szamlazz.Item({
 With gross unit price:
 
 ```javascript
-let solidItem2 = new szamlazz.Item({
+let soldItem2 = new szamlazz.Item({
   label: 'Second item',
   quantity: 5,
   unit: 'qt',
@@ -108,7 +108,7 @@ let invoice = new szamlazz.Invoice({
   language: szamlazz.Language.Hungarian, // optional, default: Hungarian
   seller: seller, // the seller, required
   buyer: buyer, // the buyer, required
-  items: [ soldItem1, solidItem2 ] // the sold items, required
+  items: [ soldItem1, soldItem2 ] // the sold items, required
 })
 ```
 
