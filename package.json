@@ -1,6 +1,6 @@
 {
   "name": "szamlazz.js",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Integration module for the szamlazz.hu online invoice provider",
   "main": "index.js",
   "browser": "./es5/index.js",
