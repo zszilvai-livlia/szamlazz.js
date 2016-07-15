@@ -15,10 +15,8 @@ let invoice
 
 let InvoiceModule
 
-describe('szamlazz.hu service answers', function () {
-
+describe('Client #issueInvoice()', function () {
   before(function (done) {
-
     mockery.enable({
       warnOnReplace: false,
       warnOnUnregistered: false,
@@ -32,6 +30,10 @@ describe('szamlazz.hu service answers', function () {
 
     InvoiceModule = require('../index.js')
 
+    /**
+     * Creates a client
+     * @type {Client}
+     */
     client = new InvoiceModule.Client({
       user: 'USERNAME',
       password: 'PASSWORD',
@@ -42,6 +44,11 @@ describe('szamlazz.hu service answers', function () {
       responseVersion: 1
     })
 
+    /**
+     * Creates a Seller
+     * Optional and can be used to override the default data.
+     * @type {Seller}
+     */
     seller = new InvoiceModule.Seller({
       bank: {
         name: 'Test Bank <name>',
@@ -55,6 +62,11 @@ describe('szamlazz.hu service answers', function () {
       issuerName: ''
     })
 
+    /**
+     * Creates a Buyer
+     * Required, you should supply basic data: name, zip, city, address as a minimum. Hungary is the default country.
+     * @type {Buyer}
+     */
     buyer = new InvoiceModule.Buyer({
       name: 'Test ' + Math.random(),
       country: '',
@@ -74,23 +86,36 @@ describe('szamlazz.hu service answers', function () {
       comment: ''
     })
 
+    /**
+     * Creates an item
+     * @type {Item}
+     */
     soldItem1 = new InvoiceModule.Item({
       label: 'First item',
       quantity: 2,
       unit: 'qt',
-      vat: 27,
-      netUnitPrice: 100.55,
-      comment: 'Ez egy árvíztűrő tükörfúrógép'
+      vat: 27, // can be a number or a special string
+      netUnitPrice: 100.55, // calculates gross and net values from per item net
+      comment: 'An item'
     })
 
+    /**
+     * Creates another item
+     * @type {Item}
+     */
     soldItem2 = new InvoiceModule.Item({
       label: 'Second item',
       quantity: 5,
       unit: 'qt',
       vat: 27,
-      grossUnitPrice: 1270
+      grossUnitPrice: 1270 // calculates net and total values from per item gross
     })
 
+    /**
+     * Creates an invoice
+     * Buyer and seller can be shared between invoices.
+     * @type {Invoice}
+     */
     invoice = new InvoiceModule.Invoice({
       paymentMethod: InvoiceModule.PaymentMethod.BankTransfer,
       currency: InvoiceModule.Currency.Ft,
@@ -108,7 +133,8 @@ describe('szamlazz.hu service answers', function () {
     done()
   })
 
-  it('With text response, the invoice creation has failed', function (done) {
+  it('should handle error response in text format', function (done) {
+    // With text response, the invoice creation has failed
     requestStub.yields(new Error('An error message from our api'), {
       statusCode: 200,
       headers: {
@@ -117,6 +143,7 @@ describe('szamlazz.hu service answers', function () {
       }
     })
 
+    // Issue an invoice
     client.issueInvoice(invoice, function (err, body, response) {
       expect(err).to.be.a('error')
       expect(response.headers).to.have.property('szlahu_error_code')
@@ -125,7 +152,27 @@ describe('szamlazz.hu service answers', function () {
     })
   })
 
-  it('With XML response besides to szamlaLetoltes=false, the invoice creation has succeeded', function (done) {
+  it('should handle error response in xml format ', function (done) {
+    // With XML response, the invoice creation has failed
+    requestStub.yields(new Error('An error message from our api'), {
+      statusCode: 200,
+      headers: {
+        szlahu_error_code: '3',
+        szlahu_error: 'Failed login error message from the remote service'
+      }
+    })
+
+    // Issue an invoice
+    client.issueInvoice(invoice, function (err, body, response) {
+      expect(err).to.be.a('error')
+      expect(response.headers).to.have.property('szlahu_error_code')
+      expect(response.headers).to.have.property('szlahu_error')
+      done()
+    })
+  })
+
+  it('should handle success response without download request', function (done) {
+    // With XML response besides to szamlaLetoltes=false, the invoice creation has succeeded
     requestStub.yields(null, {
       statusCode: 200,
       headers: {
@@ -135,8 +182,10 @@ describe('szamlazz.hu service answers', function () {
       }
     })
 
+    // Without download request
     client.setRequestInvoiceDownload(false)
 
+    // Issue an invoice
     client.issueInvoice(invoice, function (err, result, response) {
       expect(err).to.be.a('null')
 
@@ -150,7 +199,8 @@ describe('szamlazz.hu service answers', function () {
     })
   })
 
-  it('With XML response besides to szamlaLetoltes=true, the invoice creation has succeeded', function (done) {
+  it('should handle success response with download request', function (done) {
+    // With XML response besides to szamlaLetoltes=true, the invoice creation has succeeded
     requestStub.yields(null, {
       statusCode: 200,
       headers: {
@@ -160,8 +210,10 @@ describe('szamlazz.hu service answers', function () {
       }
     })
 
+    // With download request
     client.setRequestInvoiceDownload(true)
 
+    // Issue an invoice
     client.issueInvoice(invoice, function (err, result, response) {
       expect(err).to.be.a('null')
 
@@ -173,23 +225,6 @@ describe('szamlazz.hu service answers', function () {
         'szlahu_szamlaszam'
       )
 
-      done()
-    })
-  })
-
-  it('with XML response, the invoice creation has failed ', function (done) {
-    requestStub.yields(new Error('An error message from our api'), {
-      statusCode: 200,
-      headers: {
-        szlahu_error_code: '3',
-        szlahu_error: 'Failed login error message from the remote service'
-      }
-    })
-
-    client.issueInvoice(invoice, function (err, body, response) {
-      expect(err).to.be.a('error')
-      expect(response.headers).to.have.property('szlahu_error_code')
-      expect(response.headers).to.have.property('szlahu_error')
       done()
     })
   })
