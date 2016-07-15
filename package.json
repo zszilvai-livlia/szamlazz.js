@@ -9,7 +9,6 @@
     "main": "./es5/index.js"
   },
   "scripts": {
-    "test": "taper tests/test-*.js",
     "test-unit": "mocha 'tests/*.spec.js'",
     "compile": "./node_modules/.bin/babel src --out-dir es5"
   },
@@ -25,9 +24,7 @@
     "chai": "^3.5.0",
     "mocha": "^2.5.3",
     "mockery": "^1.7.0",
-    "sinon": "^1.17.4",
-    "tape": "^4.4.0",
-    "taper": "^0.5.0"
+    "sinon": "^1.17.4"
   },
   "dependencies": {
     "esnextguardian": "^1.2.1",
