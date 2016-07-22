@@ -433,7 +433,7 @@ describe('Client', function () {
 
   describe('_generateInvoiceXML', function () {
     it('should return valid XML', function (done) {
-      fs.readFile(path.join(__dirname, 'xmlszamla.xsd'), function (err, data) {
+      fs.readFile(path.join(__dirname, 'resources', 'xmlszamla.xsd'), function (err, data) {
         if (!err) {
           let xsd = xmljs.parseXmlString(data)
           let xml = xmljs.parseXmlString(client._generateInvoiceXML(invoice))
@@ -445,91 +445,209 @@ describe('Client', function () {
   })
 
   describe('issueInvoice', function () {
-    describe('error', function () {
-      it('should handle error response in text format', function (done) {
-        requestStub.yields(new Error('An error message from our api'), {
+    describe('HTTP status', function () {
+      it('should handle failed requests', function (done) {
+        requestStub.yields(null, {
+          statusCode: 500,
+          statusMessage: 'Internal Server Error'
+        })
+
+        client.issueInvoice(invoice, function (err, body, response) {
+          expect(err).to.be.a('error')
+          done()
+        })
+      })
+    })
+
+    describe('error response in text format', function () {
+      beforeEach(function (done) {
+        requestStub.yields(null, {
           statusCode: 200,
           headers: {
             szlahu_error_code: '57',
             szlahu_error: 'Some error message from the remote service'
           }
         })
+        done()
+      })
 
-        client.issueInvoice(invoice, function (err, body, response) {
+      it('should have error parameter', function (done) {
+        client.issueInvoice(invoice, function (err) {
           expect(err).to.be.a('error')
-          expect(response.headers).to.have.property('szlahu_error_code')
-          expect(response.headers).to.have.property('szlahu_error')
           done()
         })
       })
 
-      it('should handle error response in xml format ', function (done) {
-        requestStub.yields(new Error('An error message from our api'), {
-          statusCode: 200,
-          headers: {
-            szlahu_error_code: '3',
-            szlahu_error: 'Failed login error message from the remote service'
-          }
-        })
-
-        client.issueInvoice(invoice, function (err, body, response) {
-          expect(err).to.be.a('error')
+      it('should have `szlahu_error_code` property', function (done) {
+        client.issueInvoice(invoice, function (e, body, response) {
           expect(response.headers).to.have.property('szlahu_error_code')
+          done()
+        })
+      })
+
+      it('should have `szlahu_error` property', function (done) {
+        client.issueInvoice(invoice, function (e, body, response) {
           expect(response.headers).to.have.property('szlahu_error')
           done()
         })
       })
     })
 
-    describe('success', function () {
-      it('should handle success response without download request', function (done) {
-        requestStub.yields(null, {
-          statusCode: 200,
-          headers: {
-            szlahu_bruttovegosszeg: '6605',
-            szlahu_nettovegosszeg: '5201',
-            szlahu_szamlaszam: '2016-139'
-          }
+    describe('error response in xml format', function () {
+      beforeEach(function (done) {
+        fs.readFile(path.join(__dirname, 'resources', 'error.xml'), function (e, xml) {
+          requestStub.yields(null, {
+            statusCode: 200,
+            headers: {
+              szlahu_error_code: '3',
+              szlahu_error: 'Failed login error message from the remote service'
+            },
+            xml
+          })
+          done()
         })
+      })
 
-        client.setRequestInvoiceDownload(false)
+      it('should have error parameter', function (done) {
+        client.issueInvoice(invoice, function (err) {
+          expect(err).to.be.a('error')
+          done()
+        })
+      })
 
-        client.issueInvoice(invoice, function (err, result, response) {
+      it('should have result parameter')
+
+      it('should have `szlahu_error_code` property', function (done) {
+        client.issueInvoice(invoice, function (e, body, response) {
+          expect(response.headers).to.have.property('szlahu_error_code')
+          done()
+        })
+      })
+
+      it('should have `szlahu_error` property', function (done) {
+        client.issueInvoice(invoice, function (e, body, response) {
+          expect(response.headers).to.have.property('szlahu_error')
+          done()
+        })
+      })
+    })
+
+    describe('successful invoice generation without download request', function () {
+      beforeEach(function (done) {
+        fs.readFile(path.join(__dirname, 'resources', 'success_without_pdf.xml'), function (e, data) {
+          requestStub.yields(null, {
+            statusCode: 200,
+            headers: {
+              szlahu_bruttovegosszeg: '6605',
+              szlahu_nettovegosszeg: '5201',
+              szlahu_szamlaszam: '2016-139'
+            }
+          }, data)
+
+          client.setRequestInvoiceDownload(false)
+          done()
+        })
+      })
+
+      it('should have result parameter', function (done) {
+        client.issueInvoice(invoice, function (err, result) {
           expect(err).to.be.a('null')
 
-          expect(response.headers).to.have.all.keys(
-            'szlahu_bruttovegosszeg',
-            'szlahu_nettovegosszeg',
-            'szlahu_szamlaszam'
+          expect(result).to.have.all.keys(
+            'invoiceId',
+            'netTotal',
+            'grossTotal'
           )
 
           done()
         })
       })
 
-      it('should handle success response with download request', function (done) {
-        requestStub.yields(null, {
-          statusCode: 200,
-          headers: {
-            szlahu_bruttovegosszeg: '6605',
-            szlahu_nettovegosszeg: '5201',
-            szlahu_szamlaszam: '2016-139'
-          }
+      it('should have `invoiceId` property', function (done) {
+        client.issueInvoice(invoice, function (err, result) {
+          expect(err).to.be.a('null')
+          expect(result).to.have.property('invoiceId').that.is.a('string')
+          done()
         })
+      })
 
-        client.setRequestInvoiceDownload(true)
+      it('should have `netTotal` property', function (done) {
+        client.issueInvoice(invoice, function (err, result) {
+          expect(err).to.be.a('null')
+          expect(parseFloat(result.netTotal)).is.a('number')
+          done()
+        })
+      })
 
-        client.issueInvoice(invoice, function (err, result, response) {
+      it('should have `grossTotal` property', function (done) {
+        client.issueInvoice(invoice, function (err, result) {
+          expect(err).to.be.a('null')
+          expect(parseFloat(result.grossTotal)).is.a('number')
+          done()
+        })
+      })
+    })
+
+    describe('successful invoice generation with download request', function () {
+      beforeEach(function (done) {
+        fs.readFile(path.join(__dirname, 'resources', 'success_without_pdf.xml'), function (e, data) {
+          requestStub.yields(null, {
+            statusCode: 200,
+            headers: {
+              szlahu_bruttovegosszeg: '6605',
+              szlahu_nettovegosszeg: '5201',
+              szlahu_szamlaszam: '2016-139'
+            }
+          }, data)
+
+          client.setRequestInvoiceDownload(true)
+          done()
+        })
+      })
+
+      it('should have result parameter', function (done) {
+        client.issueInvoice(invoice, function (err, result) {
           expect(err).to.be.a('null')
 
-          expect(result).to.have.property('pdf')
-
-          expect(response.headers).to.have.all.keys(
-            'szlahu_bruttovegosszeg',
-            'szlahu_nettovegosszeg',
-            'szlahu_szamlaszam'
+          expect(result).to.have.all.keys(
+            'invoiceId',
+            'netTotal',
+            'grossTotal',
+            'pdf'
           )
 
+          done()
+        })
+      })
+
+      it('should have `invoiceId` property', function (done) {
+        client.issueInvoice(invoice, function (err, result) {
+          expect(err).to.be.a('null')
+          expect(result).to.have.property('invoiceId').that.is.a('string')
+          done()
+        })
+      })
+
+      it('should have `netTotal` property', function (done) {
+        client.issueInvoice(invoice, function (err, result) {
+          expect(err).to.be.a('null')
+          expect(parseFloat(result.netTotal)).is.a('number')
+          done()
+        })
+      })
+
+      it('should have `grossTotal` property', function (done) {
+        client.issueInvoice(invoice, function (err, result) {
+          expect(err).to.be.a('null')
+          expect(parseFloat(result.grossTotal)).is.a('number')
+          done()
+        })
+      })
+
+      it('should have `pdf` property', function (done) {
+        client.issueInvoice(invoice, function (err, result) {
+          expect(err).to.be.a('null')
+          expect(result.pdf).to.be.an.instanceof(Buffer)
           done()
         })
       })

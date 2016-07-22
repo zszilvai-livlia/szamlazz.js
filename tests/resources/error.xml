@@ -1,0 +1,5 @@
+<xmlszamlavalasz>
+    <sikeres>false</sikeres>
+    <hibakod>3</hibakod>
+    <hibauzenet><![CDATA[Bejelentkezési hiba - a megadott login név és jelszó pároshoz nem létezik felhasználó]]></hibauzenet>
+</xmlszamlavalasz>
