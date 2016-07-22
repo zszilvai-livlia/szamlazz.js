@@ -76,6 +76,10 @@ var Client = function () {
           return cb(err, body, httpResponse);
         }
 
+        if (httpResponse.statusCode !== 200) {
+          return cb(new Error(httpResponse.statusCode + ' ' + httpResponse.statusMessage), body, httpResponse);
+        }
+
         if (httpResponse.headers.szlahu_error_code) {
           err = new Error(decodeURIComponent(httpResponse.headers.szlahu_error.replace(/\+/g, ' ')));
           err.code = httpResponse.headers.szlahu_error_code;
