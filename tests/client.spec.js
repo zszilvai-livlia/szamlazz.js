@@ -95,7 +95,7 @@ describe('Client', function () {
       })
     })
 
-    describe('error response in text format', function () {
+    describe('service error response', function () {
       beforeEach(function (done) {
         requestStub.yields(null, {
           statusCode: 200,
@@ -113,45 +113,6 @@ describe('Client', function () {
           done()
         })
       })
-
-      it('should have `szlahu_error_code` property', function (done) {
-        client.issueInvoice(invoice, function (e, body, response) {
-          expect(response.headers).to.have.property('szlahu_error_code')
-          done()
-        })
-      })
-
-      it('should have `szlahu_error` property', function (done) {
-        client.issueInvoice(invoice, function (e, body, response) {
-          expect(response.headers).to.have.property('szlahu_error')
-          done()
-        })
-      })
-    })
-
-    describe('error response in xml format', function () {
-      beforeEach(function (done) {
-        fs.readFile(path.join(__dirname, 'resources', 'error.xml'), function (e, xml) {
-          requestStub.yields(null, {
-            statusCode: 200,
-            headers: {
-              szlahu_error_code: '3',
-              szlahu_error: 'Failed login error message from the remote service'
-            },
-            xml
-          })
-          done()
-        })
-      })
-
-      it('should have error parameter', function (done) {
-        client.issueInvoice(invoice, function (err) {
-          expect(err).to.be.a('error')
-          done()
-        })
-      })
-
-      it('should have result parameter')
 
       it('should have `szlahu_error_code` property', function (done) {
         client.issueInvoice(invoice, function (e, body, response) {
