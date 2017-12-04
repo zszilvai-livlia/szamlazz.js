@@ -5,7 +5,7 @@ A Node.js client for Szamlazz.hu
 ## Installation
 
 ```
-npm install szamlazz.hu --save
+npm install szamlazz.js --save
 ```
 
 ## Usage
