@@ -54,6 +54,23 @@ var Item = function () {
         } else {
           throw new Error('Net or Gross Value is required for Item price calculation');
         }
+      } else if (typeof this._options.vat === 'string') {
+        if (['TAM', 'AAM', 'EU', 'EUK', 'MAA'].includes(this._options.vat)) {
+          if (this._options.netUnitPrice) {
+            this._options.netValue = round(this._options.netUnitPrice * this._options.quantity, currency.roundPriceExp)
+            this._options.vatValue = 0
+            this._options.grossValue = this._options.netValue + this._options.vatValue
+          }
+          else if (this._options.grossUnitPrice) {
+            this._options.grossValue = round(this._options.grossUnitPrice * this._options.quantity, currency.roundPriceExp)
+            this._options.vatValue = 0
+            this._options.netValue = this._options.grossValue - this._options.vatValue
+            this._options.netUnitPrice = round(this._options.netValue / this._options.quantity, 2)
+          }
+          else {
+            throw new Error('Net or Gross Value is required for Item price calculation')
+          }
+        }
       }
 
       indentLevel = indentLevel || 0;
