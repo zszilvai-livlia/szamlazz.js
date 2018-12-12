@@ -11,7 +11,9 @@ const Item = require('./Item')
 const defaultOptions = {
   paymentMethod: Constants.PaymentMethod.BankTransfer,
   currency: Constants.Currency.Ft,
-  language: Constants.Language.Hungarian
+  language: Constants.Language.Hungarian,
+  exchangeRate: 0,
+  exchangeBank: ''
 }
 
 class Invoice {
@@ -20,6 +22,8 @@ class Invoice {
     this._options.issueDate = this._options.issueDate || new Date()
     this._options.fulfillmentDate = this._options.fulfillmentDate || new Date()
     this._options.dueDate = this._options.dueDate || new Date()
+    this._options.exchangeRate = this._options.exchangeRate,
+    this._options.exchangeBank = this._options.exchangeBank
   }
 
   _generateXML (indentLevel) {
@@ -60,8 +64,8 @@ class Invoice {
       [ 'penznem', this._options.currency.value ],
       [ 'szamlaNyelve', this._options.language.value ],
       [ 'megjegyzes', this._options.comment ],
-      // ['arfolyamBank', ],
-      // ['arfolyam', ],
+      [ 'arfolyamBank', this._options.exchangeBank ],
+      [ 'arfolyam', this._options.exchangeRate ],
       [ 'rendelesSzam', this._options.orderNumber ],
       // ['elolegszamla', ],
       // ['vegszamla', ],
