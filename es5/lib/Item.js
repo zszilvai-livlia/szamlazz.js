@@ -37,8 +37,6 @@ var Item = function () {
 
       assert(typeof this._options.quantity === 'number' && this._options.quantity !== 0, 'Valid Count value missing from item options');
 
-      assert(typeof this._options.unit === 'string' && this._options.unit.trim() !== '', 'Valid Unit value missing from item options');
-
       assert(typeof this._options.vat !== 'undefined' && this._options.vat !== '', 'Valid Vat Percentage value missing from item options');
 
       if (typeof this._options.vat === 'number') {
@@ -57,18 +55,16 @@ var Item = function () {
       } else if (typeof this._options.vat === 'string') {
         if (['TAM', 'AAM', 'EU', 'EUK', 'MAA'].includes(this._options.vat)) {
           if (this._options.netUnitPrice) {
-            this._options.netValue = round(this._options.netUnitPrice * this._options.quantity, currency.roundPriceExp)
-            this._options.vatValue = 0
-            this._options.grossValue = this._options.netValue + this._options.vatValue
-          }
-          else if (this._options.grossUnitPrice) {
-            this._options.grossValue = round(this._options.grossUnitPrice * this._options.quantity, currency.roundPriceExp)
-            this._options.vatValue = 0
-            this._options.netValue = this._options.grossValue - this._options.vatValue
-            this._options.netUnitPrice = round(this._options.netValue / this._options.quantity, 2)
-          }
-          else {
-            throw new Error('Net or Gross Value is required for Item price calculation')
+            this._options.netValue = round(this._options.netUnitPrice * this._options.quantity, currency.roundPriceExp);
+            this._options.vatValue = 0;
+            this._options.grossValue = this._options.netValue + this._options.vatValue;
+          } else if (this._options.grossUnitPrice) {
+            this._options.grossValue = round(this._options.grossUnitPrice * this._options.quantity, currency.roundPriceExp);
+            this._options.vatValue = 0;
+            this._options.netValue = this._options.grossValue - this._options.vatValue;
+            this._options.netUnitPrice = round(this._options.netValue / this._options.quantity, 2);
+          } else {
+            throw new Error('Net or Gross Value is required for Item price calculation');
           }
         }
       }

@@ -41,7 +41,7 @@ function wrapWithElement(name, data, indentLevel) {
 
   var o = '';
 
-  if (typeof data !== 'undefined' && String(data).trim() !== '' && data !== null) {
+  if (typeof data !== 'undefined' && data !== null) {
     o = pad(indentLevel) + '<' + name + '>';
 
     if (Array.isArray(data)) {

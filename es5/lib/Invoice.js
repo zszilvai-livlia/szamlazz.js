@@ -15,7 +15,9 @@ var Item = require('./Item');
 var defaultOptions = {
   paymentMethod: Constants.PaymentMethod.BankTransfer,
   currency: Constants.Currency.Ft,
-  language: Constants.Language.Hungarian
+  language: Constants.Language.Hungarian,
+  exchangeRate: 0,
+  exchangeBank: ''
 };
 
 var Invoice = function () {
@@ -26,6 +28,7 @@ var Invoice = function () {
     this._options.issueDate = this._options.issueDate || new Date();
     this._options.fulfillmentDate = this._options.fulfillmentDate || new Date();
     this._options.dueDate = this._options.dueDate || new Date();
+    this._options.exchangeRate = this._options.exchangeRate, this._options.exchangeBank = this._options.exchangeBank;
   }
 
   _createClass(Invoice, [{
@@ -53,10 +56,7 @@ var Invoice = function () {
 
       assert(Array.isArray(this._options.items), 'Valid Items array missing from invoice options');
 
-      var o = XMLUtils.wrapWithElement('fejlec', [['keltDatum', this._options.issueDate], ['teljesitesDatum', this._options.fulfillmentDate], ['fizetesiHataridoDatum', this._options.dueDate], ['fizmod', this._options.paymentMethod.value], ['penznem', this._options.currency.value], ['szamlaNyelve', this._options.language.value], ['megjegyzes', this._options.comment],
-      // ['arfolyamBank', ],
-      // ['arfolyam', ],
-      ['rendelesSzam', this._options.orderNumber],
+      var o = XMLUtils.wrapWithElement('fejlec', [['keltDatum', this._options.issueDate], ['teljesitesDatum', this._options.fulfillmentDate], ['fizetesiHataridoDatum', this._options.dueDate], ['fizmod', this._options.paymentMethod.value], ['penznem', this._options.currency.value], ['szamlaNyelve', this._options.language.value], ['megjegyzes', this._options.comment], ['arfolyamBank', this._options.exchangeBank], ['arfolyam', this._options.exchangeRate], ['rendelesSzam', this._options.orderNumber],
       // ['elolegszamla', ],
       // ['vegszamla', ],
       ['dijbekero', this._options.proforma], ['szamlaszamElotag', this._options.invoiceIdPrefix], ['fizetve', this._options.paid]], indentLevel);
