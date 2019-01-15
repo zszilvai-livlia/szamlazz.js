@@ -20,7 +20,7 @@ var Buyer = function () {
 
     assert(typeof this._options.name === 'string' && this._options.name.trim().length > 0, 'Valid Name field missing from buyer options');
 
-    assert(typeof this._options.zip === 'string' && this._options.zip.trim().length > 0, 'Valid Zip field missing from buyer options');
+    assert(typeof this._options.zip === 'string', 'Zip field missing from buyer options');
 
     assert(typeof this._options.city === 'string' && this._options.city.trim().length > 0, 'Valid City field missing from buyer options');
 
