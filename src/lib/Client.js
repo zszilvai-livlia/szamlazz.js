@@ -3,6 +3,7 @@
 const assert = require('assert')
 const merge = require('merge')
 const request = require('request')
+const xml2js = require('xml2js')
 const XMLUtils = require('./XMLUtils')
 
 const xmlHeader =
@@ -34,8 +35,48 @@ class Client {
     this._cookieJar = request.jar()
   }
 
+  getInvoiceData (options, cb) {
+    const hasInvoiceNumber = typeof options.invoiceNumber === 'string' && options.invoiceNumber.trim().length > 1
+    const hasOrderNumber = typeof options.orderNumber === 'string' && options.orderNumber.trim().length > 1
+    assert(hasInvoiceNumber || hasOrderNumber, 'Either invoiceNumber or orderNumber must be specified')
+
+    const xml =
+      '<?xml version="1.0" encoding="UTF-8"?>\n\
+      <xmlszamlaxml xmlns="http://www.szamlazz.hu/xmlszamlaxml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlaxml http://www.szamlazz.hu/docs/xsds/agentpdf/xmlszamlaxml.xsd">\n' +
+      XMLUtils.wrapWithElement([
+        [ 'felhasznalo', this._options.user ],
+        [ 'jelszo', this._options.password ],
+        [ 'szamlaszam', options.invoiceNumber ],
+        [ 'rendelesSzam', options.orderNumber ],
+        [ 'pdf', options.pdf ]
+      ]) +
+      '</xmlszamlaxml>'
+
+    this._sendRequest(
+      'action-szamla_agent_xml',
+      xml,
+      'utf8',
+      (httpResponse, cb) => {
+        xml2js.parseString(httpResponse.body, (e, res) => {
+          cb(e, res.szamla)
+        })
+      },
+      cb)
+  }
+
   issueInvoice (invoice, cb) {
-    this._sendRequest('action-xmlagentxmlfile', this._generateInvoiceXML(invoice), cb)
+    this._sendRequest(
+      'action-xmlagentxmlfile',
+      this._generateInvoiceXML(invoice),
+      null,
+      (httpResponse, cb) => {
+        cb(null, {
+          invoiceId: httpResponse.headers.szlahu_szamlaszam,
+          netTotal: httpResponse.headers.szlahu_nettovegosszeg,
+          grossTotal: httpResponse.headers.szlahu_bruttovegosszeg
+        });
+      },
+      cb)
   }
 
   setRequestInvoiceDownload (value) {
@@ -57,7 +98,7 @@ class Client {
       xmlFooter
   }
 
-  _sendRequest (fileFieldName, data, cb) {
+  _sendRequest (fileFieldName, data, encoding, getResult, cb) {
     const formData = {}
 
     formData[ fileFieldName ] = {
@@ -73,7 +114,7 @@ class Client {
       method: 'POST',
       url: szamlazzURL,
       jar: this._cookieJar,
-      encoding: null
+      encoding,
     }, (err, httpResponse, body) => {
       if (err) {
         return cb(err, body, httpResponse)
@@ -89,28 +130,28 @@ class Client {
         return cb(err, body, httpResponse)
       }
 
-      const result = {
-        invoiceId: httpResponse.headers.szlahu_szamlaszam,
-        netTotal: httpResponse.headers.szlahu_nettovegosszeg,
-        grossTotal: httpResponse.headers.szlahu_bruttovegosszeg
-      }
+      getResult(httpResponse, (err2, result) => {
+        if (err2) {
+          return cb(err, body, httpResponse)
+        }
 
-      if (this._options.requestInvoiceDownload) {
-        if (this._options.responseVersion === 2) {
-          XMLUtils.xml2obj(body, { 'xmlszamlavalasz.pdf': 'pdf' }, (err2, parsed) => {
-            if (err2) {
-              return cb(err2, body, httpResponse)
-            }
-            result.pdf = new Buffer(parsed.pdf, 'base64')
+        if (this._options.requestInvoiceDownload) {
+          if (this._options.responseVersion === 2) {
+            XMLUtils.xml2obj(body, { 'xmlszamlavalasz.pdf': 'pdf' }, (err3, parsed) => {
+              if (err3) {
+                return cb(err3, body, httpResponse)
+              }
+              result.pdf = new Buffer(parsed.pdf, 'base64')
+              cb(null, result, httpResponse)
+            })
+          } else {
+            result.pdf = body
             cb(null, result, httpResponse)
-          })
+          }
         } else {
-          result.pdf = body
           cb(null, result, httpResponse)
         }
-      } else {
-        cb(null, result, httpResponse)
-      }
+      })
     })
   }
 }

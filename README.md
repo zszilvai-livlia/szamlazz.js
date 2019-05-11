@@ -128,6 +128,26 @@ szamlazzClient.issueInvoice(invoice, (e, result) =>
 })
 ```
 
+### Get invoice data
+
+You can get the data of a previously issued invoice:
+
+```
+const szamlazzClient = new szamlazz.Client({
+  user: 'USERNAME',
+  password: 'PASSWORD'
+})
+
+const getInvoiceData = util.promisify(szamlazzClient.getInvoiceData).bind(szamlazzClient)
+const invoice = await getInvoiceData({
+  invoiceNumber: 'E-RNJLO-2019-1234', // invoice number
+  orderNumber: '1234', // order number
+  pdf: false // downloads the pdf invoice. optional, default: false
+})
+```
+
+Either the invoice number or the order number must be specified.
+
 ## Constants
 
 ### PaymentMethod
