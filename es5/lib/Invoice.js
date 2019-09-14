@@ -24,7 +24,7 @@ var Invoice = function () {
   function Invoice(options) {
     _classCallCheck(this, Invoice);
 
-    this._options = merge(defaultOptions, options || {});
+    this._options = merge(true, defaultOptions, options || {});
     this._options.issueDate = this._options.issueDate || new Date();
     this._options.fulfillmentDate = this._options.fulfillmentDate || new Date();
     this._options.dueDate = this._options.dueDate || new Date();
