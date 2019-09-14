@@ -148,6 +148,24 @@ const invoice = await getInvoiceData({
 
 Either the invoice number or the order number must be specified.
 
+### Reverse invoice
+
+You can reverse a previously issued invoice:
+
+```
+const szamlazzClient = new szamlazz.Client({
+  user: 'USERNAME',
+  password: 'PASSWORD'
+})
+
+const reverseInvoice = util.promisify(szamlazzClient.reverseInvoice).bind(szamlazzClient)
+const invoice = await reverseInvoice({
+  invoiceId: 'E-RNJLO-2019-1234', // invoice number
+  eInvoice: true, // create e-invoice
+  requestInvoiceDownload: false, // downloads the issued pdf invoice
+})
+```
+
 ## Constants
 
 ### PaymentMethod
