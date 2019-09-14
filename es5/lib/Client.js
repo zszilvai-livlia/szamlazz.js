@@ -7,6 +7,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var assert = require('assert');
 var merge = require('merge');
 var request = require('request');
+var xml2js = require('xml2js');
 var XMLUtils = require('./XMLUtils');
 
 var xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>\n' + '<xmlszamla xmlns="http://www.szamlazz.hu/xmlszamla" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' + 'xsi:schemaLocation="http://www.szamlazz.hu/xmlszamla xmlszamla.xsd">\n';
@@ -36,9 +37,31 @@ var Client = function () {
   }
 
   _createClass(Client, [{
+    key: 'getInvoiceData',
+    value: function getInvoiceData(options, cb) {
+      var hasInvoiceNumber = typeof options.invoiceNumber === 'string' && options.invoiceNumber.trim().length > 1;
+      var hasOrderNumber = typeof options.orderNumber === 'string' && options.orderNumber.trim().length > 1;
+      assert(hasInvoiceNumber || hasOrderNumber, 'Either invoiceNumber or orderNumber must be specified');
+
+      var xml = '<?xml version="1.0" encoding="UTF-8"?>\n\
+      <xmlszamlaxml xmlns="http://www.szamlazz.hu/xmlszamlaxml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlaxml http://www.szamlazz.hu/docs/xsds/agentpdf/xmlszamlaxml.xsd">\n' + XMLUtils.wrapWithElement([['felhasznalo', this._options.user], ['jelszo', this._options.password], ['szamlaszam', options.invoiceNumber], ['rendelesSzam', options.orderNumber], ['pdf', options.pdf]]) + '</xmlszamlaxml>';
+
+      this._sendRequest('action-szamla_agent_xml', xml, 'utf8', function (httpResponse, cb) {
+        xml2js.parseString(httpResponse.body, function (e, res) {
+          cb(e, res.szamla);
+        });
+      }, cb);
+    }
+  }, {
     key: 'issueInvoice',
     value: function issueInvoice(invoice, cb) {
-      this._sendRequest('action-xmlagentxmlfile', this._generateInvoiceXML(invoice), cb);
+      this._sendRequest('action-xmlagentxmlfile', this._generateInvoiceXML(invoice), null, function (httpResponse, cb) {
+        cb(null, {
+          invoiceId: httpResponse.headers.szlahu_szamlaszam,
+          netTotal: httpResponse.headers.szlahu_nettovegosszeg,
+          grossTotal: httpResponse.headers.szlahu_bruttovegosszeg
+        });
+      }, cb);
     }
   }, {
     key: 'setRequestInvoiceDownload',
@@ -52,7 +75,7 @@ var Client = function () {
     }
   }, {
     key: '_sendRequest',
-    value: function _sendRequest(fileFieldName, data, cb) {
+    value: function _sendRequest(fileFieldName, data, encoding, getResult, cb) {
       var _this = this;
 
       var formData = {};
@@ -70,7 +93,7 @@ var Client = function () {
         method: 'POST',
         url: szamlazzURL,
         jar: this._cookieJar,
-        encoding: null
+        encoding: encoding
       }, function (err, httpResponse, body) {
         if (err) {
           return cb(err, body, httpResponse);
@@ -86,28 +109,28 @@ var Client = function () {
           return cb(err, body, httpResponse);
         }
 
-        var result = {
-          invoiceId: httpResponse.headers.szlahu_szamlaszam,
-          netTotal: httpResponse.headers.szlahu_nettovegosszeg,
-          grossTotal: httpResponse.headers.szlahu_bruttovegosszeg
-        };
+        getResult(httpResponse, function (err2, result) {
+          if (err2) {
+            return cb(err, body, httpResponse);
+          }
 
-        if (_this._options.requestInvoiceDownload) {
-          if (_this._options.responseVersion === 2) {
-            XMLUtils.xml2obj(body, { 'xmlszamlavalasz.pdf': 'pdf' }, function (err2, parsed) {
-              if (err2) {
-                return cb(err2, body, httpResponse);
-              }
-              result.pdf = new Buffer(parsed.pdf, 'base64');
+          if (_this._options.requestInvoiceDownload) {
+            if (_this._options.responseVersion === 2) {
+              XMLUtils.xml2obj(body, { 'xmlszamlavalasz.pdf': 'pdf' }, function (err3, parsed) {
+                if (err3) {
+                  return cb(err3, body, httpResponse);
+                }
+                result.pdf = new Buffer(parsed.pdf, 'base64');
+                cb(null, result, httpResponse);
+              });
+            } else {
+              result.pdf = body;
               cb(null, result, httpResponse);
-            });
+            }
           } else {
-            result.pdf = body;
             cb(null, result, httpResponse);
           }
-        } else {
-          cb(null, result, httpResponse);
-        }
+        });
       });
     }
   }]);
