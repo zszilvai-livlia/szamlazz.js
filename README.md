@@ -140,7 +140,7 @@ const szamlazzClient = new szamlazz.Client({
 
 const getInvoiceData = util.promisify(szamlazzClient.getInvoiceData).bind(szamlazzClient)
 const invoice = await getInvoiceData({
-  invoiceNumber: 'E-RNJLO-2019-1234', // invoice number
+  invoiceId: 'E-RNJLO-2019-1234', // invoice number
   orderNumber: '1234', // order number
   pdf: false // downloads the pdf invoice. optional, default: false
 })

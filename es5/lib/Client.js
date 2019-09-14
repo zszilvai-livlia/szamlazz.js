@@ -39,12 +39,12 @@ var Client = function () {
   _createClass(Client, [{
     key: 'getInvoiceData',
     value: function getInvoiceData(options, cb) {
-      var hasInvoiceNumber = typeof options.invoiceNumber === 'string' && options.invoiceNumber.trim().length > 1;
+      var hasinvoiceId = typeof options.invoiceId === 'string' && options.invoiceId.trim().length > 1;
       var hasOrderNumber = typeof options.orderNumber === 'string' && options.orderNumber.trim().length > 1;
-      assert(hasInvoiceNumber || hasOrderNumber, 'Either invoiceNumber or orderNumber must be specified');
+      assert(hasinvoiceId || hasOrderNumber, 'Either invoiceId or orderNumber must be specified');
 
       var xml = '<?xml version="1.0" encoding="UTF-8"?>\n\
-      <xmlszamlaxml xmlns="http://www.szamlazz.hu/xmlszamlaxml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlaxml http://www.szamlazz.hu/docs/xsds/agentpdf/xmlszamlaxml.xsd">\n' + XMLUtils.wrapWithElement([['felhasznalo', this._options.user], ['jelszo', this._options.password], ['szamlaszam', options.invoiceNumber], ['rendelesSzam', options.orderNumber], ['pdf', options.pdf]]) + '</xmlszamlaxml>';
+      <xmlszamlaxml xmlns="http://www.szamlazz.hu/xmlszamlaxml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlaxml http://www.szamlazz.hu/docs/xsds/agentpdf/xmlszamlaxml.xsd">\n' + XMLUtils.wrapWithElement([['felhasznalo', this._options.user], ['jelszo', this._options.password], ['szamlaszam', options.invoiceId], ['rendelesSzam', options.orderNumber], ['pdf', options.pdf]]) + '</xmlszamlaxml>';
 
       this._sendRequest('action-szamla_agent_xml', xml, 'utf8', function (httpResponse, cb) {
         xml2js.parseString(httpResponse.body, function (e, res) {

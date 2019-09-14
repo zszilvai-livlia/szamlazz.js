@@ -36,9 +36,9 @@ class Client {
   }
 
   getInvoiceData (options, cb) {
-    const hasInvoiceNumber = typeof options.invoiceNumber === 'string' && options.invoiceNumber.trim().length > 1
+    const hasinvoiceId = typeof options.invoiceId === 'string' && options.invoiceId.trim().length > 1
     const hasOrderNumber = typeof options.orderNumber === 'string' && options.orderNumber.trim().length > 1
-    assert(hasInvoiceNumber || hasOrderNumber, 'Either invoiceNumber or orderNumber must be specified')
+    assert(hasinvoiceId || hasOrderNumber, 'Either invoiceId or orderNumber must be specified')
 
     const xml =
       '<?xml version="1.0" encoding="UTF-8"?>\n\
@@ -46,7 +46,7 @@ class Client {
       XMLUtils.wrapWithElement([
         [ 'felhasznalo', this._options.user ],
         [ 'jelszo', this._options.password ],
-        [ 'szamlaszam', options.invoiceNumber ],
+        [ 'szamlaszam', options.invoiceId ],
         [ 'rendelesSzam', options.orderNumber ],
         [ 'pdf', options.pdf ]
       ]) +
