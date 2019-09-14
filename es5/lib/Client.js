@@ -53,6 +53,20 @@ var Client = function () {
       }, cb);
     }
   }, {
+    key: 'reverseInvoice',
+    value: function reverseInvoice(options, cb) {
+      assert(typeof options.invoiceId === 'string' && options.invoiceId.trim().length > 1, 'invoiceId must be specified');
+      assert(options.eInvoice !== undefined, 'eInvoice must be specified');
+      assert(options.requestInvoiceDownload !== undefined, 'requestInvoiceDownload must be specified');
+
+      var xml = '<?xml version="1.0" encoding="UTF-8"?>\n\
+      <xmlszamlast xmlns="http://www.szamlazz.hu/xmlszamlast" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlast https://www.szamlazz.hu/szamla/docs/xsds/agentst/xmlszamlast.xsd">\n' + XMLUtils.wrapWithElement('beallitasok', [['felhasznalo', this._options.user], ['jelszo', this._options.password], ['eszamla', String(options.eInvoice)], ['szamlaLetoltes', String(options.requestInvoiceDownload)]]) + XMLUtils.wrapWithElement('fejlec', [['szamlaszam', options.invoiceId], ['keltDatum', new Date()]]) + '</xmlszamlast>';
+
+      this._sendRequest('action-szamla_agent_st', xml, 'utf8', function (httpResponse, cb) {
+        cb(httpResponse.body);
+      }, cb);
+    }
+  }, {
     key: 'issueInvoice',
     value: function issueInvoice(invoice, cb) {
       this._sendRequest('action-xmlagentxmlfile', this._generateInvoiceXML(invoice), null, function (httpResponse, cb) {
