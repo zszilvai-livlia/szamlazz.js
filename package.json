@@ -9,7 +9,7 @@
     "main": "./es5/index.js"
   },
   "scripts": {
-    "test": "./node_modules/.bin/standard && ./node_modules/.bin/mocha 'tests/*.spec.js'",
+    "test": "./node_modules/.bin/mocha 'tests/*.spec.js'",
     "compile": "./node_modules/.bin/babel src --out-dir es5"
   },
   "repository": {
@@ -24,8 +24,7 @@
     "chai": "^3.5.0",
     "mocha": "^5.2.0",
     "mockery": "^1.7.0",
-    "sinon": "^1.17.4",
-    "standard": "^7.1.2"
+    "sinon": "^1.17.4"
   },
   "dependencies": {
     "esnextguardian": "^1.2.1",
