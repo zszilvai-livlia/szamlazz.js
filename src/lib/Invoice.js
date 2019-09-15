@@ -1,7 +1,6 @@
 'use strict'
 
 const assert = require('assert')
-const merge = require('merge')
 const Constants = require('./Constants').setup()
 const XMLUtils = require('./XMLUtils')
 const Seller = require('./Seller')
@@ -18,12 +17,22 @@ const defaultOptions = {
 
 class Invoice {
   constructor (options) {
-    this._options = merge(true, defaultOptions, options || {})
-    this._options.issueDate = this._options.issueDate || new Date()
-    this._options.fulfillmentDate = this._options.fulfillmentDate || new Date()
-    this._options.dueDate = this._options.dueDate || new Date()
-    this._options.exchangeRate = this._options.exchangeRate,
-    this._options.exchangeBank = this._options.exchangeBank
+    this._options = {};
+    this._options.issueDate = options.issueDate || new Date()
+    this._options.fulfillmentDate = options.fulfillmentDate || new Date()
+    this._options.dueDate = options.dueDate || new Date()
+    this._options.paymentMethod = options.paymentMethod || defaultOptions.paymentMethod
+    this._options.currency = options.currency || defaultOptions.currency
+    this._options.language = options.language || defaultOptions.language
+    this._options.exchangeRate = options.exchangeRate || defaultOptions.exchangeRate
+    this._options.exchangeBank = options.exchangeBank || defaultOptions.exchangeBank
+    this._options.seller = options.seller
+    this._options.buyer = options.buyer
+    this._options.items = options.items
+    this._options.orderNumber = options.orderNumber
+    this._options.proforma = options.proforma
+    this._options.invoiceIdPrefix = options.invoiceIdPrefix
+    this._options.paid = options.paid
   }
 
   _generateXML (indentLevel) {
