@@ -3,7 +3,7 @@
 
 const fs = require('fs')
 const path = require('path')
-const xmljs = require('libxmljs')
+const xmljs = require('libxmljs2')
 const sinon = require('sinon')
 const mockery = require('mockery')
 const expect = require('chai').expect
