@@ -33,6 +33,7 @@ class Invoice {
     this._options.proforma = options.proforma
     this._options.invoiceIdPrefix = options.invoiceIdPrefix
     this._options.paid = options.paid
+    this._options.comment = options.comment
   }
 
   _generateXML (indentLevel) {
