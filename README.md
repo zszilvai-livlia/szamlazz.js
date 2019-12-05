@@ -28,6 +28,19 @@ const szamlazzClient = new szamlazz.Client({
 })
 ```
 
+Or use "Számla Agent" key to authenticate the client
+
+```javascript
+const szamlazzClient = new szamlazz.Client({
+  authToken: 'SZAMLAAGENTKEY',
+  eInvoice: false, // create e-invoice. optional, default: false
+  passpharase: '', // passpharase for e-invoice. optional
+  requestInvoiceDownload: true, // downloads the issued pdf invoice. optional, default: false
+  downloadedInvoiceCount: 1, // optional, default: 1
+  responseVersion: 1 // optional, default: 1
+})
+```
+
 You can reuse this client to issue invoices.
 
 ### Create a seller
