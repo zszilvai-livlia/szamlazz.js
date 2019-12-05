@@ -13,6 +13,7 @@ const setup = require('./resources/setup')
 let requestStub
 
 let client
+let tokenClient
 let seller
 let buyer
 let soldItem1
@@ -35,6 +36,7 @@ beforeEach(function (done) {
 
   Szamlazz = require('..')
   client = setup.createClient(Szamlazz)
+  tokenClient = setup.createTokenClient(Szamlazz)
   seller = setup.createSeller(Szamlazz)
   buyer = setup.createBuyer(Szamlazz)
   soldItem1 = setup.createSoldItemNet(Szamlazz)
@@ -247,6 +249,43 @@ describe('Client', function () {
           expect(result.pdf).to.be.an.instanceof(Buffer)
           done()
         })
+      })
+    })
+  })
+})
+
+
+describe('Client with auth token', function () {
+  describe('constructor', function () {
+    it('should set _options property', function (done) {
+      expect(tokenClient).to.have.property('_options').that.is.an('object')
+      done()
+    })
+
+    it('should set authToken', function (done) {
+      expect(tokenClient._options).to.have.property('authToken').that.is.a('string')
+      done()
+    })
+
+    it('should not set user', function (done) {
+      expect(tokenClient._options).to.not.have.property('user')
+      done()
+    })
+    it('should not set password', function (done) {
+      expect(tokenClient._options).to.not.have.property('password')
+      done()
+    })
+  })
+
+  describe('_generateInvoiceXML', function () {
+    it('should return valid XML', function (done) {
+      fs.readFile(path.join(__dirname, 'resources', 'xmlszamla.xsd'), function (err, data) {
+        if (!err) {
+          let xsd = xmljs.parseXmlString(data)
+          let xml = xmljs.parseXmlString(tokenClient._generateInvoiceXML(invoice))
+          expect(xml.validate(xsd)).to.be.true
+          done()
+        }
       })
     })
   })
