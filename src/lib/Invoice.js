@@ -81,8 +81,8 @@ class Invoice {
       // ['elolegszamla', ],
       // ['vegszamla', ],
       [ 'dijbekero', this._options.proforma ],
-      [ 'szamlaszamElotag', this._options.invoiceIdPrefix ],
       [ 'logoExtra', this._options.logoImage ],
+      [ 'szamlaszamElotag', this._options.invoiceIdPrefix ],
       [ 'fizetve', this._options.paid ]
     ], indentLevel)
 
