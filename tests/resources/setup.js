@@ -14,6 +14,16 @@ exports.createClient = function (Szamlazz) {
   })
 }
 
+exports.createTokenClient = function (Szamlazz) {
+  return new Szamlazz.Client({
+    authToken: 'AUTHTOKEN',
+    eInvoice: false,
+    passpharase: '',
+    requestInvoiceDownload: true,
+    downloadedInvoiceCount: 0,
+    responseVersion: 1
+  })
+}
 /**
  * Create seller
  * Optional and can be used to override the default data.

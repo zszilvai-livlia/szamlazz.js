@@ -24,14 +24,18 @@ const defaultOptions = {
 
 class Client {
   constructor (options) {
-    this._options = merge(defaultOptions, options || {})
+    this._options = merge({}, defaultOptions, options || {})
 
-    assert(typeof this._options.user === 'string' && this._options.user.trim().length > 1,
+    this.useToken = typeof this._options.authToken === 'string' && this._options.authToken.trim().length > 1
+
+    if (!this.useToken) {
+      assert(typeof this._options.user === 'string' && this._options.user.trim().length > 1,
       'Valid User field missing form client options')
-
-    assert(typeof this._options.password === 'string' && this._options.password.trim().length > 1,
+      
+      assert(typeof this._options.password === 'string' && this._options.password.trim().length > 1,
       'Valid Password field missing form client options')
-
+    }
+      
     this._cookieJar = request.jar()
   }
 
@@ -44,8 +48,7 @@ class Client {
       '<?xml version="1.0" encoding="UTF-8"?>\n\
       <xmlszamlaxml xmlns="http://www.szamlazz.hu/xmlszamlaxml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlaxml http://www.szamlazz.hu/docs/xsds/agentpdf/xmlszamlaxml.xsd">\n' +
       XMLUtils.wrapWithElement([
-        [ 'felhasznalo', this._options.user ],
-        [ 'jelszo', this._options.password ],
+        ...this._getAuthFields(),
         [ 'szamlaszam', options.invoiceId ],
         [ 'rendelesSzam', options.orderNumber ],
         [ 'pdf', options.pdf ]
@@ -74,8 +77,7 @@ class Client {
       <xmlszamlast xmlns="http://www.szamlazz.hu/xmlszamlast" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlast https://www.szamlazz.hu/szamla/docs/xsds/agentst/xmlszamlast.xsd">\n' +
       XMLUtils.wrapWithElement(
         'beallitasok', [
-          [ 'felhasznalo', this._options.user ],
-          [ 'jelszo', this._options.password ],
+          ...this._getAuthFields(),
           [ 'eszamla', String(options.eInvoice) ],
           [ 'szamlaLetoltes', String(options.requestInvoiceDownload) ],
       ]) +
@@ -115,11 +117,27 @@ class Client {
     this._options.requestInvoiceDownload = value
   }
 
+  _getAuthFields () {
+    let authFields = []
+
+    if (this.useToken) {
+      authFields = authFields.concat([
+        [ 'szamlaagentkulcs', this._options.authToken ],
+      ])
+    } else {
+      authFields = authFields.concat([
+        [ 'felhasznalo', this._options.user ],
+        [ 'jelszo', this._options.password ],
+      ])
+    }
+
+    return authFields
+  }
+
   _generateInvoiceXML (invoice) {
     return xmlHeader +
       XMLUtils.wrapWithElement('beallitasok', [
-        [ 'felhasznalo', this._options.user ],
-        [ 'jelszo', this._options.password ],
+        ...this._getAuthFields(),
         [ 'eszamla', this._options.eInvoice ],
         [ 'kulcstartojelszo', this._options.passpharase ],
         [ 'szamlaLetoltes', this._options.requestInvoiceDownload ],
