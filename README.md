@@ -176,6 +176,7 @@ The following payment methods are supported by szamlazz.hu:
 szamlazz.PaymentMethod.Cash
 szamlazz.PaymentMethod.BankTransfer
 szamlazz.PaymentMethod.CreditCard
+szamlazz.PaymentMethod.PayPal
 ```
 
 ### Currency
