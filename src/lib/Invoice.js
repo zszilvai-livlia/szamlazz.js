@@ -34,6 +34,7 @@ class Invoice {
     this._options.invoiceIdPrefix = options.invoiceIdPrefix
     this._options.paid = options.paid
     this._options.comment = options.comment
+    this._options.logoImage = options.logoImage
   }
 
   _generateXML (indentLevel) {
@@ -80,6 +81,7 @@ class Invoice {
       // ['elolegszamla', ],
       // ['vegszamla', ],
       [ 'dijbekero', this._options.proforma ],
+      [ 'logoExtra', this._options.logoImage ],
       [ 'szamlaszamElotag', this._options.invoiceIdPrefix ],
       [ 'fizetve', this._options.paid ]
     ], indentLevel)
