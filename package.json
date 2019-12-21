@@ -3,11 +3,7 @@
   "version": "1.0.9",
   "description": "Integration module for the szamlazz.hu online invoice provider",
   "main": "index.js",
-  "browser": "./es5/index.js",
   "jsnext:main": "./src/index.js",
-  "jspm": {
-    "main": "./es5/index.js"
-  },
   "scripts": {
     "test": "./node_modules/.bin/mocha 'tests/*.spec.js'"
   },
@@ -29,10 +25,5 @@
     "merge": "^1.2.0",
     "request": "^2.73.0",
     "xml2js": "^0.4.16"
-  },
-  "standard": {
-    "ignore": [
-      "es5/"
-    ]
   }
 }
