@@ -53,7 +53,7 @@ let seller = new szamlazz.Seller({ // everyting is optional
   },
   email: {
     replyToAddress: 'test@email.com',
-    subject: 'Invocie email subject',
+    subject: 'Invoice email subject',
     message: 'This is an email message'
   },
   issuerName: ''
