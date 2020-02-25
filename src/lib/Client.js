@@ -31,11 +31,11 @@ class Client {
     if (!this.useToken) {
       assert(typeof this._options.user === 'string' && this._options.user.trim().length > 1,
       'Valid User field missing form client options')
-      
+
       assert(typeof this._options.password === 'string' && this._options.password.trim().length > 1,
       'Valid Password field missing form client options')
     }
-      
+
     this._cookieJar = request.jar()
   }
 
@@ -139,7 +139,7 @@ class Client {
       XMLUtils.wrapWithElement('beallitasok', [
         ...this._getAuthFields(),
         [ 'eszamla', this._options.eInvoice ],
-        [ 'kulcstartojelszo', this._options.passpharase ],
+        [ 'kulcstartojelszo', this._options.passphrase ],
         [ 'szamlaLetoltes', this._options.requestInvoiceDownload ],
         [ 'szamlaLetoltesPld', this._options.downloadedInvoiceCount ],
         [ 'valaszVerzio', this._options.responseVersion ]

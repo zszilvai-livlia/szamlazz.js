@@ -7,7 +7,7 @@ exports.createClient = function (Szamlazz) {
     user: 'USERNAME',
     password: 'PASSWORD',
     eInvoice: false,
-    passpharase: '',
+    passphrase: '',
     requestInvoiceDownload: true,
     downloadedInvoiceCount: 0,
     responseVersion: 1
@@ -18,7 +18,7 @@ exports.createTokenClient = function (Szamlazz) {
   return new Szamlazz.Client({
     authToken: 'AUTHTOKEN',
     eInvoice: false,
-    passpharase: '',
+    passphrase: '',
     requestInvoiceDownload: true,
     downloadedInvoiceCount: 0,
     responseVersion: 1

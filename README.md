@@ -21,7 +21,7 @@ const szamlazzClient = new szamlazz.Client({
   user: 'USERNAME',
   password: 'PASSWORD',
   eInvoice: false, // create e-invoice. optional, default: false
-  passpharase: '', // passpharase for e-invoice. optional
+  passphrase: '', // passphrase for e-invoice. optional
   requestInvoiceDownload: true, // downloads the issued pdf invoice. optional, default: false
   downloadedInvoiceCount: 1, // optional, default: 1
   responseVersion: 1 // optional, default: 1
@@ -34,7 +34,7 @@ Or use "Számla Agent" key to authenticate the client
 const szamlazzClient = new szamlazz.Client({
   authToken: 'SZAMLAAGENTKEY',
   eInvoice: false, // create e-invoice. optional, default: false
-  passpharase: '', // passpharase for e-invoice. optional
+  passphrase: '', // passphrase for e-invoice. optional
   requestInvoiceDownload: true, // downloads the issued pdf invoice. optional, default: false
   downloadedInvoiceCount: 1, // optional, default: 1
   responseVersion: 1 // optional, default: 1
