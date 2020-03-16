@@ -93,7 +93,11 @@ class Client {
       xml,
       'utf8',
       (httpResponse, cb) => {
-          cb(httpResponse.body)
+        cb(null, {
+          invoiceId: httpResponse.headers.szlahu_szamlaszam,
+          netTotal: httpResponse.headers.szlahu_nettovegosszeg,
+          grossTotal: httpResponse.headers.szlahu_bruttovegosszeg
+        })
       },
       cb)
   }
