@@ -165,7 +165,7 @@ Either the invoice number or the order number must be specified.
 
 You can reverse a previously issued invoice:
 
-```
+```javascript
 const szamlazzClient = new szamlazz.Client({
   user: 'USERNAME',
   password: 'PASSWORD'
@@ -177,6 +177,16 @@ const invoice = await reverseInvoice({
   eInvoice: true, // create e-invoice
   requestInvoiceDownload: false, // downloads the issued pdf invoice
 })
+```
+
+Response
+```javascript
+{
+  invoiceId: 'WXSKA-2020-00', // The id of the created reverse invoice
+  netTotal: '1000',           // Total value of the reverse invoice excl. VAT
+  grossTotal: '1270'          // Total value of the reverse invoice incl. VAT
+  pdf: null                   // the PDF content as string if requestInvoiceDownload was true, otherwise false
+}
 ```
 
 ## Constants

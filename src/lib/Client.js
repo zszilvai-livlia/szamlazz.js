@@ -93,10 +93,18 @@ class Client {
       xml,
       'utf8',
       (httpResponse, cb) => {
+        let pdf = null
+        const contentType = httpResponse.headers['content-type']
+
+        if (contentType && contentType.indexOf('application/pdf') === 0) {
+          pdf = httpResponse.body
+        }
+
         cb(null, {
           invoiceId: httpResponse.headers.szlahu_szamlaszam,
           netTotal: httpResponse.headers.szlahu_nettovegosszeg,
-          grossTotal: httpResponse.headers.szlahu_bruttovegosszeg
+          grossTotal: httpResponse.headers.szlahu_bruttovegosszeg,
+          pdf: pdf
         })
       },
       cb)
