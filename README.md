@@ -180,6 +180,16 @@ const invoice = await reverseInvoice({
 })
 ```
 
+Response
+```javascript
+{
+  invoiceId: 'WXSKA-2020-00', // The id of the created reverse invoice
+  netTotal: '1000',           // Total value of the reverse invoice excl. VAT
+  grossTotal: '1270'          // Total value of the reverse invoice incl. VAT
+  pdf: null                   // the PDF content as string if requestInvoiceDownload was true, otherwise false
+}
+```
+
 ## Constants
 
 ### PaymentMethod
