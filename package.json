@@ -17,11 +17,11 @@
     "chai": "^3.5.0",
     "mocha": "^5.2.0",
     "mockery": "^1.7.0",
-    "sinon": "^1.17.4"
+    "sinon": "^1.17.4",
+    "libxmljs2": "^0.21.6"
   },
   "dependencies": {
     "esnextguardian": "^1.2.1",
-    "libxmljs2": "^0.21.6",
     "merge": "^1.2.0",
     "request": "^2.73.0",
     "xml2js": "^0.4.16"
