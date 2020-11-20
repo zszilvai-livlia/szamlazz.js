@@ -34,6 +34,17 @@ class PaymentMethod {
   }
 }
 
+class TaxSubject {
+  constructor (value, comment) {
+    this.value = value
+    this.comment = comment
+  }
+
+  toString () {
+    return this.value
+  }
+}
+
 exports.setup = function (_module) {
   _module = _module || {}
 
@@ -83,7 +94,15 @@ exports.setup = function (_module) {
     PayPal: new PaymentMethod('PayPal', 'PayPal')
   }
 
-  _module.Interface = { Currency, Language, PaymentMethod }
+  _module.TaxSubject = {
+    NonEUCompany: new TaxSubject(7, 'Company outside EU'),
+    EUCompany: new TaxSubject(6, 'Company within EU'),
+    HungarianTaxID: new TaxSubject(1, 'Has Hungarian VAT ID'),
+    Unknown: new TaxSubject(0, 'Unknown VAT status'),
+    NoTaxID: new TaxSubject(-1, 'Has no Hungarian VAT ID')
+  }
+
+  _module.Interface = { Currency, Language, PaymentMethod, TaxSubject }
 
   return _module
 }
