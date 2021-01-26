@@ -3,15 +3,21 @@
 const assert = require('assert')
 const merge = require('merge')
 const XMLUtils = require('./XMLUtils')
+const Constants = require('./Constants').setup()
 
 const defaultOptions = {
-  postAddress: {}
+  postAddress: {},
+  taxSubject: Constants.TaxSubject.Unknown
 }
 
 class Buyer {
   constructor (options) {
     this._options = merge.recursive(true, defaultOptions, options || {})
+    this._options.taxSubject = options.taxSubject || defaultOptions.taxSubject
 
+    assert(this._options.taxSubject instanceof Constants.Interface.TaxSubject,
+      'Valid TaxSubject field missing from buyer invoice options')
+  
     assert(typeof this._options.name === 'string' && this._options.name.trim().length > 0,
       'Valid Name field missing from buyer options')
 
@@ -36,6 +42,7 @@ class Buyer {
       [ 'cim', this._options.address ],
       [ 'email', this._options.email ],
       [ 'sendEmail', this._options.sendEmail ],
+      [ 'adoalany', this._options.taxSubject ],
       [ 'adoszam', this._options.taxNumber ],
       [ 'adoszamEU', this._options.taxNumberEU ],
       [ 'postazasiNev', this._options.postAddress.name ],

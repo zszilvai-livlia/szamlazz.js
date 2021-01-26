@@ -63,6 +63,7 @@ exports.createBuyer = function (Szamlazz) {
       city: 'City',
       address: 'Some street address'
     },
+    taxSubject: Szamlazz.TaxSubject.Unknown,
     issuerName: '',
     identifier: 1,
     phone: '',
