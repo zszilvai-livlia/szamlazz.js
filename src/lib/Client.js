@@ -109,6 +109,7 @@ class Client {
       },
       cb)
   }
+
   deleteProforma (options, cb) {
     assert(typeof options.orderNumber === 'string' && options.orderNumber.trim().length > 1, 'invoiceId must be specified')
 
@@ -127,6 +128,48 @@ class Client {
 
     this._sendRequest(
       'action-szamla_agent_dijbekero_torlese',
+      xml,
+      'utf8',
+      (httpResponse, cb) => {
+        let pdf = null
+        const contentType = httpResponse.headers['content-type']
+
+        if (contentType && contentType.indexOf('application/pdf') === 0) {
+          pdf = httpResponse.body
+        }
+
+        cb(null, {
+          invoiceId: httpResponse.headers.szlahu_szamlaszam,
+          netTotal: httpResponse.headers.szlahu_nettovegosszeg,
+          grossTotal: httpResponse.headers.szlahu_bruttovegosszeg,
+          pdf: pdf
+        })
+      },
+      cb)
+  }
+
+  registerCreditEntry (options, cb) {
+    assert(typeof options.invoiceId === 'string' && options.invoiceId.trim().length > 1, 'invoiceId must be specified')
+
+    const xml =
+      '<?xml version="1.0" encoding="UTF-8"?>\n\
+      <xmlszamlakifiz xmlns="http://www.szamlazz.hu/xmlszamlakifiz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlakifiz https://www.szamlazz.hu/szamla/docs/xsds/agentkifiz/xmlszamlakifiz.xsd">\n' +
+      XMLUtils.wrapWithElement(
+        'beallitasok', [
+          ...this._getAuthFields(),
+              ['szamlaszam', options.invoiceId],
+              ['additiv', options.additive || false],
+      ]) +
+      XMLUtils.wrapWithElement(
+        'kifizetes', [
+          [ 'datum', options.date || new Date() ],
+          [ 'jogcim', options.right],
+          [ 'osszeg', options.amount]
+      ]) +
+      '</xmlszamlakifiz>'
+
+    this._sendRequest(
+      'action-szamla_agent_kifiz',
       xml,
       'utf8',
       (httpResponse, cb) => {
