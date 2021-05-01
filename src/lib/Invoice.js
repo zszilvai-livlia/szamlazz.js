@@ -36,6 +36,7 @@ class Invoice {
     this._options.comment = options.comment
     this._options.logoImage = options.logoImage
     this._options.prepaymentInvoice = options.prepaymentInvoice || false
+    this._options.finalInvoice = options.finalInvoice || false
   }
 
   _generateXML (indentLevel) {
@@ -80,7 +81,7 @@ class Invoice {
       [ 'arfolyam', this._options.exchangeRate ],
       [ 'rendelesSzam', this._options.orderNumber ],
       [ 'elolegszamla', this._options.prepaymentInvoice ],
-      // ['vegszamla', ],
+      [ 'vegszamla', this._options.finalInvoice],
       [ 'dijbekero', this._options.proforma ],
       [ 'logoExtra', this._options.logoImage ],
       [ 'szamlaszamElotag', this._options.invoiceIdPrefix ],
