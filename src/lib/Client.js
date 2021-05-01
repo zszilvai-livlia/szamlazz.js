@@ -109,6 +109,43 @@ class Client {
       },
       cb)
   }
+  deleteProforma (options, cb) {
+    assert(typeof options.orderNumber === 'string' && options.orderNumber.trim().length > 1, 'invoiceId must be specified')
+
+    const xml =
+      '<?xml version="1.0" encoding="UTF-8"?>\n\
+      <xmlszamladbkdel xmlns="http://www.szamlazz.hu/xmlszamladbkdel" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamladbkdel https://www.szamlazz.hu/szamla/docs/xsds/dijbekerodel/xmlszamladbkdel.xsd">\n' +
+      XMLUtils.wrapWithElement(
+        'beallitasok', [
+          ...this._getAuthFields()
+      ]) +
+      XMLUtils.wrapWithElement(
+        'fejlec', [
+          [ 'rendelesszam', options.orderNumber ]
+      ]) +
+      '</xmlszamladbkdel>'
+
+    this._sendRequest(
+      'action-szamla_agent_dijbekero_torlese',
+      xml,
+      'utf8',
+      (httpResponse, cb) => {
+        let pdf = null
+        const contentType = httpResponse.headers['content-type']
+
+        if (contentType && contentType.indexOf('application/pdf') === 0) {
+          pdf = httpResponse.body
+        }
+
+        cb(null, {
+          invoiceId: httpResponse.headers.szlahu_szamlaszam,
+          netTotal: httpResponse.headers.szlahu_nettovegosszeg,
+          grossTotal: httpResponse.headers.szlahu_bruttovegosszeg,
+          pdf: pdf
+        })
+      },
+      cb)
+  }
 
   issueInvoice (invoice, cb) {
     this._sendRequest(
