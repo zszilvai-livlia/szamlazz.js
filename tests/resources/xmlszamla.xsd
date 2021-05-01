@@ -10,6 +10,7 @@
             <element name="cim" type="string" maxOccurs="1" minOccurs="1"></element>
             <element name="email" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="sendEmail" type="boolean" maxOccurs="1" minOccurs="0"></element>
+            <element name="adoalany" type="int" maxOccurs="1" minOccurs="0"></element>
             <element name="adoszam" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="adoszamEU" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="postazasiNev" type="string" maxOccurs="1" minOccurs="0"></element>
