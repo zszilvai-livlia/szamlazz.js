@@ -36,7 +36,6 @@ class Buyer {
       [ 'cim', this._options.address ],
       [ 'email', this._options.email ],
       [ 'sendEmail', this._options.sendEmail ],
-      [ 'adoalany', this._options.taxPayer ],
       [ 'adoszam', this._options.taxNumber ],
       [ 'adoszamEU', this._options.taxNumberEU ],
       [ 'postazasiNev', this._options.postAddress.name ],
